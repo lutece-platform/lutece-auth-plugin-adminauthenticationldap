@@ -1,0 +1,1 @@
+# Plugin Admin authentication LDAP
