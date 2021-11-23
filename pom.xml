@@ -46,8 +46,8 @@
     </dependencies>
 
     <properties>
-        <componentName>adminauthenticationldap</componentName>
-        <jiraProjectName>ADMINAUTHENTICATIONLDAP</jiraProjectName>
-        <jiraComponentId></jiraComponentId>
+        <componentName>admautldap</componentName>
+        <jiraProjectName>ADMAUTLDAP</jiraProjectName>
+        <jiraComponentId>16485</jiraComponentId>
     </properties>
 </project>
