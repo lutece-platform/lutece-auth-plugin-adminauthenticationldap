@@ -36,6 +36,7 @@ package fr.paris.lutece.plugins.adminauthenticationldap.service;
 import fr.paris.lutece.plugins.adminauthenticationldap.AdminLdapAuthentication;
 import fr.paris.lutece.plugins.adminauthenticationldap.business.AdminLdapUser;
 import fr.paris.lutece.portal.business.user.AdminUser;
+import fr.paris.lutece.portal.service.datastore.DatastoreService;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.util.ldap.LdapUtil;
@@ -46,6 +47,7 @@ import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 import javax.naming.directory.*;
 import javax.security.auth.login.FailedLoginException;
+import java.security.GeneralSecurityException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -57,6 +59,7 @@ public class LdapService
 
     private static final String PROPERTY_BIND_DN = "adminauthenticationldap.ldap.connectionName";
     private static final String PROPERTY_BIND_PASSWORD = "adminauthenticationldap.ldap.connectionPassword";
+    private static final String PROPERTY_IS_ENCRYPTED = "adminauthenticationldap.ldap.isEncrypted";
     private static final String PROPERTY_USER_SUBTREE = "adminauthenticationldap.ldap.userSubtree";
     private static final String PROPERTY_USER_DN_SEARCH_BASE = "adminauthenticationldap.ldap.userBase";
     private static final String PROPERTY_ROOT_DN_SEARCH_BASE = "adminauthenticationldap.ldap.rootBase";
@@ -80,7 +83,8 @@ public class LdapService
     private static final String ATTRIBUTE_DN = AppPropertiesService.getProperty( PROPERTY_USER_ATTRIBUTE_DN );
 
     private static final String BIND_DN = AppPropertiesService.getProperty( PROPERTY_BIND_DN );
-    private static final String BIND_PASSWORD = AppPropertiesService.getProperty( PROPERTY_BIND_PASSWORD );
+    private static final String BIND_PASSWORD = AppPropertiesService.getProperty( PROPERTY_BIND_PASSWORD,"" );
+    private static final Boolean IS_ENCRYPTED = AppPropertiesService.getPropertyBoolean( PROPERTY_IS_ENCRYPTED,false );
     private static final String SEARCH_SCOPE = AppPropertiesService.getProperty( PROPERTY_USER_SUBTREE, "false" );
     private static final String SEARCH_FILTER_BY_CRITERIA = AppPropertiesService.getProperty( PROPERTY_USER_DN_SEARCH_FILTER_BY_CRITERIA );
     private static final String SEARCH_FILTER_BY_ACCESS_CODE = AppPropertiesService.getProperty( PROPERTY_USER_DN_SEARCH_FILTER_BY_ACCESS_CODE );
@@ -99,7 +103,40 @@ public class LdapService
 
     public static DirContext getAdminContext( )
     {
-        return getNewContext( BIND_DN, BIND_PASSWORD );
+        return getNewContext( BIND_DN, getBindPassword());
+    }
+
+    private static String getBindPassword() {
+        String strPass = BIND_PASSWORD;
+
+        if ( StringUtils.isEmpty( strPass ) )
+        {
+            if ( DatastoreService.existsKey( PROPERTY_BIND_PASSWORD ) )
+            {
+                strPass = DatastoreService.getDataValue(PROPERTY_BIND_PASSWORD,"");
+            }
+        }
+
+        if ( StringUtils.isEmpty( strPass ) )
+        {
+            AppLogService.error("No password for Ldap.");
+            return "";
+        }
+
+        if( IS_ENCRYPTED )
+        {
+            try
+            {
+                strPass = RsaService.decryptRsa( strPass );
+            }
+            catch (GeneralSecurityException e)
+            {
+                AppLogService.error("Error decrypting password.");
+                return "";
+            }
+        }
+
+        return strPass;
     }
 
     public static DirContext getNewContext( String strDN, String strPassword )
