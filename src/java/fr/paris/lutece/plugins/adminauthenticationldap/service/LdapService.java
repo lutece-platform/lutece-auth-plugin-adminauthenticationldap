@@ -109,7 +109,7 @@ public class LdapService
     private static String getBindPassword() {
         String strPass = BIND_PASSWORD;
 
-        if ( StringUtils.isEmpty( strPass ) )
+        if ( StringUtils.isEmpty( strPass ) || DatastoreService.existsKey( PROPERTY_BIND_PASSWORD ) )
         {
             if ( DatastoreService.existsKey( PROPERTY_BIND_PASSWORD ) )
             {
@@ -127,7 +127,15 @@ public class LdapService
         {
             try
             {
-                strPass = RsaService.decryptRsa( strPass );
+                if ( strPass.startsWith("PLAINTEXT:") )
+                {
+                    strPass = strPass.replace("PLAINTEXT:","");
+                    DatastoreService.setDataValue(PROPERTY_BIND_PASSWORD, "RSA:" + RsaService.encryptRsa( strPass ) );
+                }
+                else
+                {
+                    strPass = RsaService.decryptRsa(strPass.replace("RSA:",""));
+                }
             }
             catch (GeneralSecurityException e)
             {
