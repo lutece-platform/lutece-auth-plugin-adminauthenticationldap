@@ -24,7 +24,7 @@ public final class RsaService
     {
         Cipher cipher = Cipher.getInstance( RSA_PADDING );
         cipher.init( Cipher.ENCRYPT_MODE, RSAKeyPairUtil.getInstance( ).getPublicKey( ) );
-        return Base64.getUrlEncoder( ).encodeToString( cipher.doFinal( data.getBytes( StandardCharsets.UTF_8 ) ) );
+        return Base64.getEncoder( ).encodeToString( cipher.doFinal( data.getBytes( StandardCharsets.UTF_8 ) ) );
     }
 
     /**
@@ -39,6 +39,6 @@ public final class RsaService
         Cipher cipher = Cipher.getInstance( RSA_PADDING );
         cipher.init( Cipher.DECRYPT_MODE, RSAKeyPairUtil.getInstance( ).getPrivateKey( ) );
 
-        return new String( cipher.doFinal( Base64.getUrlDecoder( ).decode( data.getBytes( StandardCharsets.UTF_8 ) ) ) );
+        return new String( cipher.doFinal( Base64.getDecoder( ).decode( data.getBytes( StandardCharsets.UTF_8 ) ) ) );
     }
 }
