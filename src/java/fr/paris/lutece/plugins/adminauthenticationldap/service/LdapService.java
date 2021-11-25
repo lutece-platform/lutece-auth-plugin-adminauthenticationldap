@@ -37,10 +37,11 @@ import fr.paris.lutece.plugins.adminauthenticationldap.AdminLdapAuthentication;
 import fr.paris.lutece.plugins.adminauthenticationldap.business.AdminLdapUser;
 import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.service.datastore.DatastoreService;
+import fr.paris.lutece.portal.service.security.RsaService;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.util.ldap.LdapUtil;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.naming.CommunicationException;
 import javax.naming.NamingEnumeration;
