@@ -50,4 +50,11 @@
         <jiraProjectName>ADMAUTLDAP</jiraProjectName>
         <jiraComponentId>16485</jiraComponentId>
     </properties>
+
+    <scm>
+        <connection>scm:git:https://github.com/lutece-platform/lutece-auth-plugin-adminauthenticationldap.git</connection>
+        <developerConnection>scm:git:https://github.com/lutece-platform/lutece-auth-plugin-adminauthenticationldap.git</developerConnection>
+        <url>https://github.com/lutece-platform/lutece-auth-plugin-adminauthenticationldap.git</url>
+    </scm>
+
 </project>
